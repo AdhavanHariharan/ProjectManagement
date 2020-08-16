@@ -24,7 +24,7 @@ router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
                 throw new Error()
             }}
     }
-        const updatedProject = await Projects.update({_id:projectId},
+        const updatedProject = await Projects.updateOne({_id:projectId},
         {
             $push:{
                 tickets:[updateOps]
