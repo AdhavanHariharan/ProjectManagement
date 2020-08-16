@@ -9,6 +9,7 @@ const userroutes=require('./routes/users')
 const projectroutes= require('./routes/projects')
 const ticketroutes= require('./routes/tickets')
 const sprintroutes= require('./routes/sprints')
+const statisticsroutes= require('./routes/statistics')
 
 
 //connecting database
@@ -35,6 +36,8 @@ app.use('/user',userroutes)
 app.use('/projects',projectroutes)
 app.use('/tickets',ticketroutes)
 app.use('/sprints',sprintroutes)
+app.use('/statistics',statisticsroutes)
+
 
 
 module.exports=app;
