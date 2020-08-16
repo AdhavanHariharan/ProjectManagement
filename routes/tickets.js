@@ -19,7 +19,7 @@ router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
             const userName = await Projects.find({email:ops.value});
             if(!userName.length>=1)
             {
-                throw new Error()
+                throw new Error("Assign to a registered user")
             }}
     }
         const updatedProject = await Projects.updateOne({_id:projectId},
@@ -36,7 +36,7 @@ router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
         });
     }
     catch(err){
-        res.status(500).json({error: "Assign to a registered user"});
+        res.status(500).json({error: err.message});
 
     }
 }))

@@ -52,7 +52,7 @@ router.get('/:projectId',asyncHandler(async(req,res,next)=>{
         }
         catch(err)
         {
-            res.status(500).json({error: "There is already one active sprint"});
+            res.status(500).json({error: err});
         }
 }))
 

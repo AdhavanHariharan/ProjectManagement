@@ -44,7 +44,7 @@ router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
     catch(err)
     {
         console.log(err);
-        res.status(500).json({error: "Assign to a registered user"});
+        res.status(500).json({error: err.message});
     }
   
 }))
@@ -73,7 +73,7 @@ router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
         }
         catch(err)
         {
-            res.status(500).json({error: "There is already one active sprint"});
+            res.status(500).json({error: err.message});
         }
 
 
@@ -115,7 +115,7 @@ router.patch('/tickets/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
     catch(err)
     {
         console.log(err);
-        res.status(500).json({error: "Assign to a registered user"});
+        res.status(500).json({error: err.message});
     }
   
 }))
