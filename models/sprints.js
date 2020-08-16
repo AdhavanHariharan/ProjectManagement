@@ -10,13 +10,12 @@ const tickets = mongoose.Schema ({
     
 })
 
-//creating schema for projects
-const projects = mongoose.Schema({
+//creating schema for sprints
+const sprints = mongoose.Schema ({ 
     _id : mongoose.Schema.Types.ObjectId,
-    email :{type:String},
-    name: {type:String},
-    tickets:[tickets]
-
+    projectId:mongoose.Schema.Types.ObjectId,
+    active :{type:String,default:"no"},
+    tickets: [tickets]
 })
 
-module.exports=mongoose.model('Projects',projects)
+module.exports=mongoose.model('Sprints',sprints)

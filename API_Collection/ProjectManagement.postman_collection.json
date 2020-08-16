@@ -10,7 +10,10 @@
 		"0528379f-b2d9-0981-c015-1515432bda76",
 		"e7d28d96-8e72-c068-c15f-47f17b283458",
 		"7e511fff-eff4-0b39-4480-cc7a268a2bdd",
-		"96bb8792-20a6-dcba-76ce-f6306b2f7723"
+		"96bb8792-20a6-dcba-76ce-f6306b2f7723",
+		"441a0896-867b-80dd-5129-b282f142c84e",
+		"90f9335c-ba1e-5ac1-a044-3d8595c66859",
+		"5e3d20c5-ff27-023d-4a68-c24938b7a967"
 	],
 	"folders": [],
 	"folders_order": [],
@@ -53,6 +56,79 @@
 			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
 			"responses": [],
 			"rawModeData": "{\n\t\"email\":\"goutham@gmail.com\",\n\t\"name\":\"Demo Project 2\"\n}"
+		},
+		{
+			"id": "441a0896-867b-80dd-5129-b282f142c84e",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTg5Mzk2LCJleHAiOjE1OTc1OTI5OTZ9.PLsN-5H0YA6pEGtMlCC6qJWHykUGfH5XBPHYIT3bc_k\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTg5Mzk2LCJleHAiOjE1OTc1OTI5OTZ9.PLsN-5H0YA6pEGtMlCC6qJWHykUGfH5XBPHYIT3bc_k",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "localhost:3000/sprints/active/5f3954cecf5b071c20642e8e",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PATCH",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1597592996057,
+			"name": "localhost:3000/sprints/5f38f2a336b71f1b9c74ea26",
+			"description": "Make a sprint active for a project",
+			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
+			"responses": [],
+			"rawModeData": "{\n\t\"active\":\"yes\"\n}"
+		},
+		{
+			"id": "5e3d20c5-ff27-023d-4a68-c24938b7a967",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTkxNjc5LCJleHAiOjE1OTc1OTUyNzl9.sH3Uw4Z7_wKzmeN4wXpuT66Sk3psgRuFt5ni-qqAhuk\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTkxNjc5LCJleHAiOjE1OTc1OTUyNzl9.sH3Uw4Z7_wKzmeN4wXpuT66Sk3psgRuFt5ni-qqAhuk",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "localhost:3000/sprints/tickets/5f3954cecf5b071c20642e8e",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PATCH",
+			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "localhost:3000/sprints/tickets/5f3954cecf5b071c20642e8e",
+			"description": "Create a ticket for a particular sprint",
+			"descriptionFormat": "html",
+			"time": 1597593765534,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n\t\"active\":\"yes\"\n}"
 		},
 		{
 			"id": "6b860d39-aa79-fabf-7541-f0047ff1ed25",
@@ -161,6 +237,43 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"rawModeData": "{\n\t\"status\":\"In Progress\"\n}"
+		},
+		{
+			"id": "90f9335c-ba1e-5ac1-a044-3d8595c66859",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTc1MDA2LCJleHAiOjE1OTc1Nzg2MDZ9.bCLDyTEw_gTbq58ROreNKIG6_Q3fF_1yegieWYdR99o\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTc1MDA2LCJleHAiOjE1OTc1Nzg2MDZ9.bCLDyTEw_gTbq58ROreNKIG6_Q3fF_1yegieWYdR99o",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "localhost:3000/sprints/5f38f2a336b71f1b9c74ea26",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "PATCH",
+			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "localhost:3000/sprints/5f38f2a336b71f1b9c74ea26",
+			"description": "Create sprints for a project",
+			"descriptionFormat": "html",
+			"time": 1597585730340,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "[\n\t{\"propName\":\"name\",\"value\":\"Ticket3\"},\n\t{\"propName\":\"description\",\"value\":\"Issue in server\"},\n\t{\"propName\":\"assignedTo\",\"value\":\"adhavan@gmail.com\"},\n\t{\"propName\":\"type\",\"value\":\"issue\"}\n]"
 		},
 		{
 			"id": "96bb8792-20a6-dcba-76ce-f6306b2f7723",

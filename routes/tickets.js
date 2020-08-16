@@ -1,8 +1,6 @@
 const express=require('express')
 const router= express.Router();
-const mongoose=require('mongoose')
 const checkAuth=require('../authentication/check-auth')
-const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler')
 const Projects=require('../models/projects')
 

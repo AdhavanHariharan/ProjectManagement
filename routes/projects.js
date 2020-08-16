@@ -2,9 +2,9 @@ const express=require('express')
 const router= express.Router();
 const mongoose=require('mongoose')
 const checkAuth=require('../authentication/check-auth')
-const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler')
 const Projects=require('../models/projects')
+const getEmail = require('../utils/decode')
 
 // Router to create a project
 router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
@@ -40,7 +40,7 @@ router.post('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
     const projectId = req.params.projectId;
     const project = await Projects.findById({_id:projectId});
     const projects = new Projects({
-        _id: mongoose.Types.ObjectId(),
+        _id: projectId,
         email : email,
         name : project.name
     })
@@ -73,13 +73,5 @@ router.get('/',asyncHandler(async(req,res,next)=>
         res.status(500).json({error:err});
     }
 }))
-
-//common function to getEmail from the request headers
-function getEmail(headers)
-{
-    var authorization = headers.authorization.split(' ')[1];
-    var decoded = jwt.verify(authorization,process.env.JWT_KEY);
-    return decoded.email;
-}
 
 module.exports=router;
