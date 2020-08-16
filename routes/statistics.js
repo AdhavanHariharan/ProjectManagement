@@ -10,8 +10,6 @@ router.get('/:projectId',asyncHandler(async(req,res,next)=>{
     const projectId = req.params.projectId;
 
     try{
-        var sprints=await Sprints.find({projectId:projectId});
-        var tickets= await Projects.find({_id:projectId});
         
        result =await Sprints.aggregate([{$match:{active:"yes"}},
             { $unwind: "$tickets"},
@@ -45,7 +43,36 @@ router.get('/:projectId',asyncHandler(async(req,res,next)=>{
         
         ])
 
+        result2 = await Sprints.aggregate([
+            {
+                "$match":
+                {
+                    projectId:"5f38d558108589162863a820"
+                }
+            },
+
+        { $unwind: "$tickets"},
+        {
+            "$group":{
+                _id:{
+                    "assignedTo":"$tickets.assignedTo",
+                    "status":"$tickets.status"
+                },
+                count:{$sum:1}
+            }
+        },
+       
+        {
+            "$project" :{
+                status:"$_id",
+                count:1,
+                _id:0
+            }
+        }
+    
+    ])
         res.status(201).json({
+            UserPerformance : result2,
             SprintPerformance: result,
             SprintUserPerformance : result1
             })

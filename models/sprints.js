@@ -13,7 +13,7 @@ const tickets = mongoose.Schema ({
 //creating schema for sprints
 const sprints = mongoose.Schema ({ 
     _id : mongoose.Schema.Types.ObjectId,
-    projectId:mongoose.Schema.Types.ObjectId,
+    projectId:{type:String},
     active :{type:String,default:"no"},
     tickets: [tickets]
 })

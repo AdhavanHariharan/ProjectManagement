@@ -13,7 +13,8 @@
 		"96bb8792-20a6-dcba-76ce-f6306b2f7723",
 		"441a0896-867b-80dd-5129-b282f142c84e",
 		"90f9335c-ba1e-5ac1-a044-3d8595c66859",
-		"5e3d20c5-ff27-023d-4a68-c24938b7a967"
+		"5e3d20c5-ff27-023d-4a68-c24938b7a967",
+		"1c9ec33f-d355-833d-895f-f6640baae74b"
 	],
 	"folders": [],
 	"folders_order": [],
@@ -53,6 +54,42 @@
 			"time": 1597567746719,
 			"name": "localhost:3000/projects/",
 			"description": "Get all the projects of a particualr user",
+			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
+			"responses": [],
+			"rawModeData": "{\n\t\"email\":\"goutham@gmail.com\",\n\t\"name\":\"Demo Project 2\"\n}"
+		},
+		{
+			"id": "1c9ec33f-d355-833d-895f-f6640baae74b",
+			"headers": "Content-Type: application/json\n//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTgzMzE5LCJleHAiOjE1OTc1ODY5MTl9.Emriwqatr_AIdRV_9X8eXQfRCPoV0reLoaDMzVGmQw8\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaGF2YW5AZ21haWwuY29tIiwidXNlcklkIjoiNWYzN2ZkMWQ1ODk0YjgxNWQ4OWNiNmEzIiwiaWF0IjoxNTk3NTgzMzE5LCJleHAiOjE1OTc1ODY5MTl9.Emriwqatr_AIdRV_9X8eXQfRCPoV0reLoaDMzVGmQw8",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"url": "localhost:3000/statistics/5f38d558108589162863a820",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1597609133749,
+			"name": "localhost:3000/statistics/",
+			"description": "Fetches the statistics of a project",
 			"collectionId": "6b82372a-049b-c8d4-d65a-678ecb206b4c",
 			"responses": [],
 			"rawModeData": "{\n\t\"email\":\"goutham@gmail.com\",\n\t\"name\":\"Demo Project 2\"\n}"
