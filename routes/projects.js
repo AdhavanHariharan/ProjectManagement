@@ -33,7 +33,7 @@ router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
 
 
 //Router to accept the invitation of a particular project
-router.post('/accept/:projectId',asyncHandler(async(req,res,next)=>
+router.post('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
 {
     var email= getEmail(req.headers);
     try{

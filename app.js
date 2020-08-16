@@ -7,6 +7,7 @@ const mongoose=require('mongoose')
 //import routes
 const userroutes=require('./routes/users')
 const projectroutes= require('./routes/projects')
+const ticketroutes= require('./routes/tickets')
 
 
 //connecting database
@@ -31,5 +32,6 @@ app.use(bodyParser.json());
 //routing APIs
 app.use('/user',userroutes)
 app.use('/projects',projectroutes)
+app.use('/tickets',ticketroutes)
 
 module.exports=app;

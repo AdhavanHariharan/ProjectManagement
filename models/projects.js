@@ -21,9 +21,9 @@ const projects = mongoose.Schema({
     _id : mongoose.Schema.Types.ObjectId,
     email :{type:String},
     name: {type:String},
-    sprints: [sprints]
+    sprints: [sprints],
+    tickets:[tickets]
 
 })
-
 
 module.exports=mongoose.model('Projects',projects)
