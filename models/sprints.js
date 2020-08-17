@@ -14,7 +14,9 @@ const tickets = mongoose.Schema ({
 const sprints = mongoose.Schema ({ 
     _id : mongoose.Schema.Types.ObjectId,
     projectId:{type:String},
+    createdBy:{type:String},
     active :{type:String,default:"no"},
+    completed :{type:String,default:"no"},
     tickets: [tickets]
 })
 

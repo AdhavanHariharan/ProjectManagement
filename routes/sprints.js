@@ -3,6 +3,7 @@ const router= express.Router();
 const mongoose=require('mongoose')
 const checkAuth=require('../authentication/check-auth')
 const asyncHandler = require('express-async-handler')
+const getEmail = require('../utils/decode')
 const Projects=require('../models/projects')
 const Sprints=require('../models/sprints')
 
@@ -10,6 +11,7 @@ const Sprints=require('../models/sprints')
 router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
 
     var projectId= req.params.projectId;
+    var email= getEmail(req.headers);
     const updateOps={};
    
     try{
@@ -28,6 +30,7 @@ router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
        
         const sprints = new Sprints({
             _id: mongoose.Types.ObjectId(),
+            createdBy:email,
             projectId:projectId,
             "tickets":[updateOps]
         })
@@ -79,6 +82,7 @@ router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
 
 }))
 
+//Router to create tickets for a sprint
 router.patch('/tickets/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
 
     var sprintId= req.params.sprintId;
@@ -119,5 +123,70 @@ router.patch('/tickets/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
     }
   
 }))
+
+
+//Router to update the status of a ticket
+router.patch('/:sprintId/:ticketId',checkAuth, asyncHandler(async(req,res,next)=>{
+
+    const sprintId = req.params.sprintId;
+    const ticketId = req.params.ticketId;
+    const status = req.body.status;
+    try{
+        const sprint = await Sprints.findById({_id:sprintId});
+        const ticket = sprint.tickets.id(ticketId);
+        ticket.status=status;
+        await sprint.save();
+        res.status(200).json({message:"Status updated"});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({error:err});
+    }
+}))
+
+router.patch('/status/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
+
+      const sprintId = req.params.sprintId;
+     
+      const completed = req.body.completed;
+     try{
+         const sprint = await Sprints.findById({_id:sprintId});
+         const projects = await Sprints.find({projectId:sprint.projectId});
+         const tickets={};
+         var result= sprint.tickets.filter(ticket=>ticket.status!="Closed");
+         result.splice(0,result.length);
+         result1= projects.filter(project=>project.completed=="no");
+         
+         if(result1.length>=1)
+         {
+            for(var i =0;i<result.length;i++)
+            {
+               tickets.status=result[i].status;
+               tickets._id=result[i]._id;
+               tickets.name=result[i].name;
+               tickets.description=result[i].description;
+               tickets.assignedTo=result[i].assignedTo;
+               tickets.type=result[i].type;
+               result1[0].tickets.push(tickets);
+               
+            }
+            sprint.completed=completed
+         }
+         else
+         {
+             throw new Error("No active sprints")
+         }
+        
+          await sprint.save();
+         res.status(200).json({message:"Completed the sprint"});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({error:err});
+    }
+}))
+
 
 module.exports=router;

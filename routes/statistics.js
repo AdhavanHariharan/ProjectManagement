@@ -71,6 +71,8 @@ router.get('/:projectId',asyncHandler(async(req,res,next)=>{
         }
     
     ])
+
+    
         res.status(201).json({
             UserPerformance : result2,
             SprintPerformance: result,
