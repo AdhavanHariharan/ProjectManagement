@@ -117,48 +117,54 @@ router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
   
 }))
 
-// router.patch('/status/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
-
-//       const sprintId = req.params.sprintId;
+//Router to move the tickets that are not closed to another sprint while completing a sprint
+router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
+    
+      const sprintId = req.params.sprintId;
      
-//       const completed = req.body.completed;
-//      try{
-//          const sprint = await Sprints.findById({_id:sprintId});
-//          const projects = await Sprints.find({projectId:sprint.projectId});
-//          const tickets={};
-//          var result= sprint.tickets.filter(ticket=>ticket.status!="Closed");
-//          result.splice(0,result.length);
-//          result1= projects.filter(project=>project.completed=="no");
-         
-//          if(result1.length>=1)
-//          {
-//             for(var i =0;i<result.length;i++)
-//             {
-//                tickets.status=result[i].status;
-//                tickets._id=result[i]._id;
-//                tickets.name=result[i].name;
-//                tickets.description=result[i].description;
-//                tickets.assignedTo=result[i].assignedTo;
-//                tickets.type=result[i].type;
-//                result1[0].tickets.push(tickets);
-               
-//             }
-//             sprint.completed=completed
-//          }
-//          else
-//          {
-//              throw new Error("No active sprints")
-//          }
-        
-//           await sprint.save();
-//          res.status(200).json({message:"Completed the sprint"});
-//     }
-//     catch(err)
-//     {
-//         console.log(err);
-//         res.status(500).json({error:err});
-//     }
-// }))
+      const completed = req.body.completed;
+
+     try{
+         const sprint = await Sprints.findById({_id:sprintId});
+
+         const sprintsNotCompleted = await Sprints.find({$and:[{projectId:sprint.projectId},{_id:{$ne:sprintId}},{completed:"no"}]});
+
+         var tickets=[];
+
+         await Promise.all(sprint.tickets.map(async ticket=>{
+            const tick = await Tickets.findOne({$and:[{_id:ticket},{status:{$ne:"Closed"}}]});
+            if(tick!==null)
+                tickets.push(tick._id.toString())
+                
+    
+         }))
+
+         if(sprintsNotCompleted.length<0)
+         {
+            throw new Error("No sprints available for this project, hence the sprint cannot be completed")
+         }
+         else
+         {
+            await Sprints.update(
+                { _id: sprint._id }, 
+                {$set:{completed:completed,active:"no"}},                
+                { $pullAll: { tickets: tickets } }
+            )
+
+           await Sprints.update(
+                { _id: sprintsNotCompleted[0]._id }, 
+                {$set:{active:"no"}},
+                { $push: { tickets: tickets } }
+            )}
+
+         res.status(200).json({message:"Completed the sprint"});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({error:err});
+    }
+}))
 
 
 module.exports=router;
