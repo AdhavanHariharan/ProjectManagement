@@ -3,44 +3,37 @@ const router= express.Router();
 const mongoose=require('mongoose')
 const checkAuth=require('../authentication/check-auth')
 const asyncHandler = require('express-async-handler')
-const getEmail = require('../utils/decode')
+const validUser = require('../authentication/validUser');
+const getEmail = require('../utils/decode');
 const Projects=require('../models/projects')
 const Sprints=require('../models/sprints')
+const Tickets=require('../models/tickets')
+
 
 //Router to create sprints for a project
-router.patch('/:projectId',checkAuth,asyncHandler(async(req,res,next)=>{
+router.patch('/:projectId',checkAuth,validUser,asyncHandler(async(req,res,next)=>{
 
     var projectId= req.params.projectId;
-    var email= getEmail(req.headers);
-    const updateOps={};
-   
-    try{
-
-        for(const ops of req.body)
-        {
-            updateOps[ops.propName]=ops.value;
-            if(ops.propName=='assignedTo')
-            {
-                const userName = await Projects.find({email:ops.value});
-                if(!userName.length>=1)
-                {
-                    throw new Error("Assign to a registered user")
-                }}
-        }
-       
+    var decoded= getEmail(req.headers);
+    var email = decoded.email;
+    try{    
         const sprints = new Sprints({
             _id: mongoose.Types.ObjectId(),
-            createdBy:email,
+            name:req.body.name,
             projectId:projectId,
-            "tickets":[updateOps]
+            createdBy:email
         })
         
+        const project = await Projects.findById({_id:projectId});
+        project.sprints.push(sprints._id);
+        project.save();
+
         await sprints.save();
 
-          res.status(200).json({ 
-          message: "Tickets saved to the project",
-          createdTopic: {
-            tickets: updateOps
+        res.status(200).json({ 
+          message: "Sprint added to the project",
+          createdSprint: {
+            tickets: sprints.name
         }
         });
     }
@@ -60,6 +53,7 @@ router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
     try{
         const sprint = await Sprints.findById({_id:sprintId});
         var projects=await Sprints.find({projectId:sprint.projectId});
+        
         var result= projects.filter(project=>project.active=="yes");
         if(result.length>=1)
         {
@@ -82,37 +76,34 @@ router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
 
 }))
 
-//Router to create tickets for a sprint
-router.patch('/tickets/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
+//Router to move tickets to an active sprint from a project
+router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
 
-    var sprintId= req.params.sprintId;
-    const updateOps={};
+    var ticketId= req.params.ticketId;
+    
    
     try{
 
-        for(const ops of req.body)
-        {
-            updateOps[ops.propName]=ops.value;
-            if(ops.propName=='assignedTo')
-            {
-                const userName = await Projects.find({email:ops.value});
-                if(!userName.length>=1)
+        const ticket= await Tickets.findOne({_id:ticketId});
+        const projectId= ticket.projectId;
+        const sprint= await Sprints.findOne({
+            $and:[
                 {
-                    throw new Error("Assign to a registered user")
-                }}
-        }
-        
-         await Sprints.updateOne({_id:sprintId},
-            {
-                $push:{
-                    tickets:[updateOps]
+                    projectId:projectId
+                },
+                {
+                    active:"yes"
                 }
-            })
+            ]
+        });
+        sprint.tickets.push(ticketId);
+        sprint.save();
 
           res.status(200).json({ 
-          message: "Tickets saved to the project",
-          createdTopic: {
-            tickets: updateOps
+          message: "Tickets moved to the sprint",
+          createdTicket: {
+            tickets: ticketId,
+            sprint: sprint.name
         }
         });
     }
@@ -124,69 +115,48 @@ router.patch('/tickets/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
   
 }))
 
+// router.patch('/status/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
 
-//Router to update the status of a ticket
-router.patch('/:sprintId/:ticketId',checkAuth, asyncHandler(async(req,res,next)=>{
-
-    const sprintId = req.params.sprintId;
-    const ticketId = req.params.ticketId;
-    const status = req.body.status;
-    try{
-        const sprint = await Sprints.findById({_id:sprintId});
-        const ticket = sprint.tickets.id(ticketId);
-        ticket.status=status;
-        await sprint.save();
-        res.status(200).json({message:"Status updated"});
-    }
-    catch(err)
-    {
-        console.log(err);
-        res.status(500).json({error:err});
-    }
-}))
-
-router.patch('/status/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
-
-      const sprintId = req.params.sprintId;
+//       const sprintId = req.params.sprintId;
      
-      const completed = req.body.completed;
-     try{
-         const sprint = await Sprints.findById({_id:sprintId});
-         const projects = await Sprints.find({projectId:sprint.projectId});
-         const tickets={};
-         var result= sprint.tickets.filter(ticket=>ticket.status!="Closed");
-         result.splice(0,result.length);
-         result1= projects.filter(project=>project.completed=="no");
+//       const completed = req.body.completed;
+//      try{
+//          const sprint = await Sprints.findById({_id:sprintId});
+//          const projects = await Sprints.find({projectId:sprint.projectId});
+//          const tickets={};
+//          var result= sprint.tickets.filter(ticket=>ticket.status!="Closed");
+//          result.splice(0,result.length);
+//          result1= projects.filter(project=>project.completed=="no");
          
-         if(result1.length>=1)
-         {
-            for(var i =0;i<result.length;i++)
-            {
-               tickets.status=result[i].status;
-               tickets._id=result[i]._id;
-               tickets.name=result[i].name;
-               tickets.description=result[i].description;
-               tickets.assignedTo=result[i].assignedTo;
-               tickets.type=result[i].type;
-               result1[0].tickets.push(tickets);
+//          if(result1.length>=1)
+//          {
+//             for(var i =0;i<result.length;i++)
+//             {
+//                tickets.status=result[i].status;
+//                tickets._id=result[i]._id;
+//                tickets.name=result[i].name;
+//                tickets.description=result[i].description;
+//                tickets.assignedTo=result[i].assignedTo;
+//                tickets.type=result[i].type;
+//                result1[0].tickets.push(tickets);
                
-            }
-            sprint.completed=completed
-         }
-         else
-         {
-             throw new Error("No active sprints")
-         }
+//             }
+//             sprint.completed=completed
+//          }
+//          else
+//          {
+//              throw new Error("No active sprints")
+//          }
         
-          await sprint.save();
-         res.status(200).json({message:"Completed the sprint"});
-    }
-    catch(err)
-    {
-        console.log(err);
-        res.status(500).json({error:err});
-    }
-}))
+//           await sprint.save();
+//          res.status(200).json({message:"Completed the sprint"});
+//     }
+//     catch(err)
+//     {
+//         console.log(err);
+//         res.status(500).json({error:err});
+//     }
+// }))
 
 
 module.exports=router;

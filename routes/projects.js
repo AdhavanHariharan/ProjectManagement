@@ -4,12 +4,13 @@ const mongoose=require('mongoose')
 const checkAuth=require('../authentication/check-auth')
 const asyncHandler = require('express-async-handler')
 const Projects=require('../models/projects')
-const getEmail = require('../utils/decode')
+const getEmail = require('../utils/decode');
 
 // Router to create a project
 router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
 
-    var email= getEmail(req.headers);
+    var decoded= getEmail(req.headers);
+    var email = decoded.email;
 
     const projects = new Projects({
         _id: mongoose.Types.ObjectId(),
@@ -27,35 +28,32 @@ router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
         }
         catch(err)
         {
-            res.status(500).json({error: err});
+            res.status(500).json({error: err.message});
         }
 }))
 
 
 //Router to accept the invitation of a particular project
-router.post('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
+router.patch('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
 {
-    var email= getEmail(req.headers);
+    var decoded= getEmail(req.headers);
+    var email = decoded.email;
     try{
     const projectId = req.params.projectId;
     const project = await Projects.findById({_id:projectId});
-    const projects = new Projects({
-        _id: projectId,
-        email : email,
-        name : project.name
-    })
-
-    const result = await projects.save();
+    project.email.push(email);
+    project.save();
+   
     res.status(201).json({
         message: "You can now view this project",
         AccessProjectTo: {
-            name: result.name
+            name: project.name
         }
         })
     }
     catch(err)
     {
-        res.status(500).json({error: err});
+        res.status(500).json({error: err.message});
     }
 }))
 
@@ -63,14 +61,15 @@ router.post('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
 router.get('/',asyncHandler(async(req,res,next)=>
 {
     try{
-    var email= getEmail(req.headers);
-    const result = await Projects.find({email});
+    var decoded= getEmail(req.headers);
+    var email = decoded.email;
+    const result = await Projects.find({email},{_id:0,email:0,__v:0});
     res.status(200).json(result);
     }
     catch(err)
     {
         console.log(err);
-        res.status(500).json({error:err});
+        res.status(500).json({error:err.message});
     }
 }))
 
