@@ -33,7 +33,6 @@ router.patch('/:projectId',checkAuth,validUser,asyncHandler(async(req,res,next)=
                 _id: mongoose.Types.ObjectId(),
                 projectId : projectId,
                 name:req.body.name,
-                description : req.body.description,
                 assignedTo : req.body.assignedTo,
                 type : req.body.type
             })

@@ -98,6 +98,8 @@ router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
         });
         sprint.tickets.push(ticketId);
         sprint.save();
+        ticket.sprintId=sprint._id;
+        ticket.save();
 
           res.status(200).json({ 
           message: "Tickets moved to the sprint",

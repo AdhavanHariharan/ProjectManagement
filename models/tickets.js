@@ -4,6 +4,7 @@ const mongoose= require('mongoose')
 const tickets = mongoose.Schema ({ 
     name :{type:String},
     projectId:{type:String},
+    sprintId:{type:String},
     description :{type:String},
     assignedTo :{type:String},
     type :{type:String},
