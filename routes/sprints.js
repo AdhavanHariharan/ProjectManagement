@@ -146,35 +146,42 @@ router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res)=>{
 
      try{
          const sprint = await Tickets.find({sprintId});
-        
-         const sprintsNotCompleted = await Sprints.find({$and:[{projectId:sprint.projectId},{_id:{$ne:sprintId}},{completed:"no"}]});
+         const sprint1 = await Sprints.findOne({_id:sprintId});
 
-         var tickets=[];
+         const sprintsNotCompleted = await Sprints.find({$and:[{projectId:sprint1.projectId},{_id:{$ne:sprintId}},{completed:"no"}]});
 
-         await Promise.all(sprint.map(async ticket=>{
-            const tick = await Tickets.findOne({$and:[{_id:ticket},{status:{$ne:"Closed"}}]});
-            if(tick!==null)
-                tickets.push(tick._id.toString())
-                
-    
-         }))
+         console.log(sprintsNotCompleted)
 
-         if(sprintsNotCompleted.length<0)
+         var tickets = sprint.filter( ticket=>{
+             return ticket.status!="Closed"
+            })
+
+         if(sprintsNotCompleted.length<0)   
          {
             throw new Error("No sprints available for this project, hence the sprint cannot be completed")
          }
          else
          {
             await Sprints.update(
-                { _id: sprint._id }, 
-                {$set:{completed:completed,active:"no"}}
+                { _id: sprintId }, 
+                { $set:
+                    {completed:completed, active:"no"}
+                }
             )
 
            await Sprints.update(
                 { _id: sprintsNotCompleted[0]._id }, 
-                {$set:{active:"no"}},
-                { $push: { tickets: tickets } }
-            )}
+                {$set:{active:"yes"}}
+            )
+
+            for(let i in tickets)
+            {
+            await Tickets.update(
+                 {_id:tickets[i]._id},
+                { $set:{sprintId: sprintsNotCompleted[0]._id} },
+            )
+            }
+        }
 
          res.status(200).json({message:"Completed the sprint"});
     }
