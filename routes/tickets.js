@@ -53,7 +53,7 @@ requsetBodyValidate, checkAuth,validUser,asyncHandler(async(req,res)=>{
                 type : req.body.type
             })
 
-           // await tickets.save();
+           await tickets.save();
 
             res.status(200).json({ 
             message: "Follwing ticket is saved to the project",
