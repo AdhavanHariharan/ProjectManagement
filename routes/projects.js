@@ -5,9 +5,15 @@ const checkAuth=require('../authentication/check-auth')
 const asyncHandler = require('express-async-handler')
 const Projects=require('../models/projects')
 const getEmail = require('../utils/decode');
+const { body } = require('express-validator');
+const requsetBodyValidate=require('../authentication/requestBodyValidation')
 
 // Router to create a project
-router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
+router.post('/',
+[
+    body('name').notEmpty()
+],
+requsetBodyValidate,checkAuth,asyncHandler(async(req,res)=>{
 
     var decoded= getEmail(req.headers);
     var email = decoded.email;
@@ -34,13 +40,18 @@ router.post('/',checkAuth,asyncHandler(async(req,res,next)=>{
 
 
 //Router to accept the invitation of a particular project
-router.patch('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
+router.patch('/accept/:projectId',checkAuth,asyncHandler(async(req,res)=>
 {
     var decoded= getEmail(req.headers);
     var email = decoded.email;
     try{
     const projectId = req.params.projectId;
     const project = await Projects.findById({_id:projectId});
+
+    if(project.email.includes(email))
+    {
+        throw new Error("You are already part of this project");
+    }
     project.email.push(email);
     project.save();
    
@@ -58,7 +69,7 @@ router.patch('/accept/:projectId',checkAuth,asyncHandler(async(req,res,next)=>
 }))
 
 //Router to get all the projects of a particular user
-router.get('/',asyncHandler(async(req,res,next)=>
+router.get('/',asyncHandler(async(req,res)=>
 {
     try{
     var decoded= getEmail(req.headers);

@@ -5,13 +5,18 @@ const checkAuth=require('../authentication/check-auth')
 const asyncHandler = require('express-async-handler')
 const validUser = require('../authentication/validUser');
 const getEmail = require('../utils/decode');
-const Projects=require('../models/projects')
 const Sprints=require('../models/sprints')
 const Tickets=require('../models/tickets')
 
+const { body } = require('express-validator');
+const requsetBodyValidate=require('../authentication/requestBodyValidation')
 
 //Router to create sprints for a project
-router.patch('/:projectId',checkAuth,validUser,asyncHandler(async(req,res,next)=>{
+router.patch('/:projectId',
+[
+    body('name').notEmpty()
+],
+requsetBodyValidate, checkAuth,validUser,asyncHandler(async(req,res)=>{
 
     var projectId= req.params.projectId;
     var decoded= getEmail(req.headers);
@@ -23,10 +28,6 @@ router.patch('/:projectId',checkAuth,validUser,asyncHandler(async(req,res,next)=
             projectId:projectId,
             createdBy:email
         })
-        
-        const project = await Projects.findById({_id:projectId});
-        project.sprints.push(sprints._id);
-        project.save();
 
         await sprints.save();
 
@@ -46,7 +47,7 @@ router.patch('/:projectId',checkAuth,validUser,asyncHandler(async(req,res,next)=
 }))
 
 //Router to make a sprint active
-router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
+router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res)=>{
 
     const sprintId = req.params.sprintId;
     const active = req.body.active;
@@ -77,7 +78,7 @@ router.patch('/active/:sprintId',checkAuth,asyncHandler(async(req,res,next)=>{
 }))
 
 //Router to move tickets to an active sprint from a project
-router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
+router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res)=>{
 
     var ticketId= req.params.ticketId;
     
@@ -85,6 +86,10 @@ router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
     try{
 
         const ticket= await Tickets.findOne({_id:ticketId});
+        if(ticket.sprintId!=null)
+        {   
+            throw new Error(`This ticket has already been assigned to the sprint ${ticket.sprintId}`);
+        }
         const projectId= ticket.projectId;
         const sprint= await Sprints.findOne({
             $and:[
@@ -96,15 +101,14 @@ router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
                 }
             ]
         });
-        sprint.tickets.push(ticketId);
-        sprint.save();
+   
         ticket.sprintId=sprint._id;
         ticket.save();
 
           res.status(200).json({ 
-          message: "Tickets moved to the sprint",
+          message: "Tickets added to the sprint",
           createdTicket: {
-            tickets: ticketId,
+            ticket: ticket.name,
             sprint: sprint.name
         }
         });
@@ -117,21 +121,37 @@ router.patch('/tickets/:ticketId',checkAuth,asyncHandler(async(req,res,next)=>{
   
 }))
 
+
+//Router to get all the sprints 
+router.get('/',asyncHandler(async(req,res)=>
+{
+    try{
+    const result = await Sprints.find();
+    res.status(200).json(result);
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({error:err.message});
+    }
+}))
+
+
 //Router to move the tickets that are not closed to another sprint while completing a sprint
-router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
+router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res)=>{
     
       const sprintId = req.params.sprintId;
      
       const completed = req.body.completed;
 
      try{
-         const sprint = await Sprints.findById({_id:sprintId});
-
+         const sprint = await Tickets.find({sprintId});
+        
          const sprintsNotCompleted = await Sprints.find({$and:[{projectId:sprint.projectId},{_id:{$ne:sprintId}},{completed:"no"}]});
 
          var tickets=[];
 
-         await Promise.all(sprint.tickets.map(async ticket=>{
+         await Promise.all(sprint.map(async ticket=>{
             const tick = await Tickets.findOne({$and:[{_id:ticket},{status:{$ne:"Closed"}}]});
             if(tick!==null)
                 tickets.push(tick._id.toString())
@@ -147,8 +167,7 @@ router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res,next)=>{
          {
             await Sprints.update(
                 { _id: sprint._id }, 
-                {$set:{completed:completed,active:"no"}},                
-                { $pullAll: { tickets: tickets } }
+                {$set:{completed:completed,active:"no"}}
             )
 
            await Sprints.update(

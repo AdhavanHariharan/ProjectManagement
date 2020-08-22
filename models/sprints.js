@@ -7,8 +7,7 @@ const sprints = mongoose.Schema ({
     projectId:{type:String},
     createdBy:{type:String},
     active :{type:String,default:"no"},
-    completed :{type:String,default:"no"},
-    tickets: [String]
+    completed :{type:String,default:"no"}
 })
 
 module.exports=mongoose.model('Sprints',sprints)

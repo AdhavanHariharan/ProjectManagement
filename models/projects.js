@@ -4,9 +4,7 @@ const mongoose= require('mongoose')
 const projects = mongoose.Schema({
     _id : mongoose.Schema.Types.ObjectId,
     email :[String],
-    name: {type:String},
-    sprints:[String],
-    tickets:[String]
+    name: {type:String}
 
 })
 

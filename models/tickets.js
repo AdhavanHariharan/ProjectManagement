@@ -1,5 +1,7 @@
 const mongoose= require('mongoose')
 
+var permitted = ['To-do','In Progress','Done','Tested','Closed'];
+
 //creating schema for tickets
 const tickets = mongoose.Schema ({ 
     name :{type:String},
@@ -8,7 +10,7 @@ const tickets = mongoose.Schema ({
     description :{type:String},
     assignedTo :{type:String},
     type :{type:String},
-    status:{type:String,default:"to-do"}
+    status:{type:String,default:"To-do",enum:permitted}
     
 })
 

@@ -7,8 +7,15 @@ const bcrypt= require ('bcrypt')
 const jwt = require("jsonwebtoken");
 const asyncHandler = require('express-async-handler')
 
+const { body } = require('express-validator');
+const requsetBodyValidate=require('../authentication/requestBodyValidation')
 
-router.post('/register', asyncHandler(async(req,res,next) => {
+router.post('/register',
+[
+  body('email').notEmpty().isEmail(),
+  body('password').isLength({min:4})
+], 
+requsetBodyValidate, asyncHandler(async(req,res) => {
 
   try
   {
@@ -40,7 +47,13 @@ router.post('/register', asyncHandler(async(req,res,next) => {
 }))
 
 
-router.post("/login", asyncHandler(async(req, res, next) => {
+router.post("/login", 
+[
+  body('email').notEmpty().isEmail(),
+  body('password').isLength({min:4})
+],
+requsetBodyValidate,
+asyncHandler(async(req, res) => {
 
   try
   {

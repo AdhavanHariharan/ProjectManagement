@@ -15,7 +15,8 @@ const statisticsroutes= require('./routes/statistics')
 //connecting database
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb+srv://insent:'+process.env.MONGO_PW+process.env.MONGO_URL,(err)=>{
+mongoose.connect('mongodb+srv://'+process.env.MONGO_USERNAME+":"+process.env.MONGO_PW+process.env.MONGO_URL,
+(err)=>{
     if(err)
     {
         console.log("Error connecting database")
