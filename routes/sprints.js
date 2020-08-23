@@ -150,8 +150,6 @@ router.patch('/status/:sprintId',checkAuth, asyncHandler(async(req,res)=>{
 
          const sprintsNotCompleted = await Sprints.find({$and:[{projectId:sprint1.projectId},{_id:{$ne:sprintId}},{completed:"no"}]});
 
-         console.log(sprintsNotCompleted)
-
          var tickets = sprint.filter( ticket=>{
              return ticket.status!="Closed"
             })
